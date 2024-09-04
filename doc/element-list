@@ -1,0 +1,7 @@
+co.edu.unbosque.electroshop_api
+co.edu.unbosque.electroshop_api.config
+co.edu.unbosque.electroshop_api.controller
+co.edu.unbosque.electroshop_api.model
+co.edu.unbosque.electroshop_api.repository
+co.edu.unbosque.electroshop_api.service
+co.edu.unbosque.electroshop_api.util

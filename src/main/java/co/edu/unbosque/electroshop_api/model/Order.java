@@ -17,37 +17,135 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+/**
+ * Entity representing an order placed by a customer.
+ * <p>
+ * This class defines the structure of an order within the system, including details such as the order date, payment method,
+ * status, total price, and associated customer and products.
+ * </p>
+ * 
+ * @see co.edu.unbosque.electroshop_api.config
+ * @see co.edu.unbosque.electroshop_api.controller
+ * @see co.edu.unbosque.electroshop_api.repository
+ * @see co.edu.unbosque.electroshop_api.service
+ * @see co.edu.unbosque.electroshop_api.util
+ */
 @Entity
 @Table(name = "orders")
+@Schema(description = "Entity representing an order placed by a customer, including details such as the order date, payment method,\n"
+		+ " * status, total price, and associated customer and products.")
 public class Order {
-	@Id
-	@Column(name = "order_id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer orderId;
-	@Column(name = "date", nullable = false)
-	private Date date;
-	@Column(name = "payment_method", nullable = false)
-	private String paymentMethod;
-	@Column(name = "status", nullable = false)
-	private String status;
-	@Column(name = "total_price", nullable = false)
-	private Float totalPrice;
-	@Column(name = "iva_price", nullable = false)
-	private Float priceWithIVA;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
+
+	/**
+     * Unique identifier for the order.
+     * <p>
+     * This field is automatically generated.
+     * </p>
+     */
+    @Id
+    @Column(name = "order_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier for the order.", example = "1")
+    private Integer orderId;
+
+    /**
+     * Date when the order was placed.
+     * <p>
+     * This field is required.
+     * </p>
+     */
+    @Column(name = "date", nullable = false)
+    @Schema(description = "Date when the order was placed.", example = "2024-09-03T00:00:00.000+00:00")
+    private Date date;
+
+    /**
+     * Method used to pay for the order.
+     * <p>
+     * This field is required.
+     * </p>
+     */
+    @Column(name = "payment_method", nullable = false)
+    @Schema(description = "Method used to pay for the order.", example = "Credit Card")
+    private String paymentMethod;
+
+    /**
+     * Current status of the order.
+     * <p>
+     * This field is required.
+     * </p>
+     */
+    @Column(name = "status", nullable = false)
+    @Schema(description = "Current status of the order.", example = "Pending")
+    private String status;
+
+    /**
+     * Total price of the order.
+     * <p>
+     * This field is required.
+     * </p>
+     */
+    @Column(name = "total_price", nullable = false)
+    @Schema(description = "Total price of the order .", example = "100.0")
+    private Float totalPrice;
+
+    /**
+     * Total price of the order including IVA.
+     * <p>
+     * This field is required.
+     * </p>
+     */
+    @Column(name = "iva_price", nullable = false)
+    @Schema(description = "Total price of the order including IVA.", example = "119.0")
+    private Float priceWithIVA;
+
+    /**
+     * Customer who placed the order.
+     * <p>
+     * This field is a reference to the customer entity.
+     * </p>
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
-	@JsonBackReference
+    @JsonBackReference
+    @Schema(description = "Customer who placed the order.")
     private Customer customer;
-	
-	@OneToMany(mappedBy = "order")
+
+    /**
+     * List of products included in the order.
+     * <p>
+     * This field is a list of {@link OrderProduct} entities associated with the order.
+     * </p>
+     */
+    @OneToMany(mappedBy = "order")
     @JsonManagedReference
-    private List<OrderProduct> orderProducts;
-	
+    @Schema(description = "List of products included in the order.")
+    private List<OrderProduct> orderProducts;	
+    
+    /**
+     * Default constructor.
+     * <p>
+     * Initializes a new instance of {@code Order}.
+     * </p>
+     */
 	public Order() {
 		
 	}
 
+	/**
+     * Constructs a new {@code Order} with the specified details.
+     * 
+     * @param orderId the unique identifier for the order
+     * @param date the date when the order was placed
+     * @param paymentMethod the method used to pay for the order
+     * @param status the current status of the order
+     * @param totalPrice the total price of the order
+     * @param priceWithIVA the total price of the order including IVA
+     * @param customer the customer who placed the order
+     * @param orderProducts the list of products included in the order
+     */
 	public Order(Integer orderId, Date date, String paymentMethod, String status, Float totalPrice,
 			Float priceWithIVA, Customer customer, List<OrderProduct> orderProducts) {
 		super();
@@ -61,6 +159,9 @@ public class Order {
 		this.orderProducts = orderProducts;
 	}
 
+	/**
+	 * Getters and Setters
+	 */
 	public Integer getOrderId() {
 		return orderId;
 	}
