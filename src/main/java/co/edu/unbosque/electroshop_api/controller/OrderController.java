@@ -14,6 +14,7 @@ import co.edu.unbosque.electroshop_api.model.ProcessedOrderDTO;
 import co.edu.unbosque.electroshop_api.model.InitialOrderDTO;
 import co.edu.unbosque.electroshop_api.service.OrderProductService;
 import co.edu.unbosque.electroshop_api.service.OrderService;
+import co.edu.unbosque.electroshop_api.service.PaymentService;
 import co.edu.unbosque.electroshop_api.service.ProductService;
 import jakarta.validation.Valid;
 
@@ -32,6 +33,9 @@ public class OrderController {
 	@Autowired
 	public OrderProductService orderProductService;
 	
+	@Autowired
+	public PaymentService paymentService;
+	
 	
 	@PostMapping("/pedidos/procesar")
 	public ResponseEntity<?> processOrder(@Valid @RequestBody InitialOrderDTO orderDTO) {
@@ -41,7 +45,8 @@ public class OrderController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Error processing order: Insufficient products.");
 		}
-		ProcessedOrderDTO processedOrder = orderService.processOrder(orderDTO, totalPrice);
+		boolean payment = paymentService.processPayment(totalPrice, orderDTO.getCard());
+		ProcessedOrderDTO processedOrder = orderService.processOrder(orderDTO, totalPrice, payment);
 		return ResponseEntity.ok(processedOrder); 
 	}
 

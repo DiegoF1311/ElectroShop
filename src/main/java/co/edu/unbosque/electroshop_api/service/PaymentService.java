@@ -10,11 +10,13 @@ import co.edu.unbosque.electroshop_api.model.CardDTO;
 @Service
 public class PaymentService {
 	
+	private final double IVA = 0.19;
+	
 	public boolean processPayment(float price, CardDTO card) {
 		Pattern pattern = Pattern.compile("[a-zA-Z]");
         Matcher matcher = pattern.matcher(card.getCardNumber());
         
-        if (matcher.find()) {
+        if (matcher.find() && (price+(price*IVA)) != 0) {
             return false;
         } else {
             try {
