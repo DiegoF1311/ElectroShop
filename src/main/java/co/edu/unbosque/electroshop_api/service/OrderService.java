@@ -33,12 +33,15 @@ public class OrderService {
 	@Autowired
 	public OrderProductRepository orderProductRepository;
 	
+	@Autowired
+	public PaymentService paymentService;
+	
 	public DataMapper dataMapper = new DataMapper();
 	
 	public ProcessedOrderDTO processOrder(InitialOrderDTO orderDTO, float totalPrice) {
 		Order order = dataMapper.orderDTOToOrder(orderDTO, totalPrice);
 		ProcessedOrderDTO processedOrder = createProcessedOrder(order, orderDTO.getProductsId());
-		if(processedOrder != null) {
+		if(paymentService.processPayment(processedOrder.getPriceWithIVA(), orderDTO.getCard())) {
 			order.setStatus("Proccesed");
 			orderRepository.save(order);
 		} else {			
