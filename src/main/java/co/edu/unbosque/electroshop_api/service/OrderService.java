@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.electroshop_api.model.Customer;
 import co.edu.unbosque.electroshop_api.model.ProcessedOrderDTO;
+import co.edu.unbosque.electroshop_api.model.Product;
 import co.edu.unbosque.electroshop_api.model.Order;
 import co.edu.unbosque.electroshop_api.model.OrderProduct;
 import co.edu.unbosque.electroshop_api.model.InitialOrderDTO;
@@ -91,9 +92,10 @@ public class OrderService {
      * @param orderDTO the data transfer object containing the initial order details
      * @param totalPrice the total price of the order
      * @param payment boolean indicating whether the payment was successful
+     * @param products complete list of products
      * @return a {@link ProcessedOrderDTO} containing the processed order details
      */
-    public ProcessedOrderDTO processOrder(InitialOrderDTO orderDTO, float totalPrice, boolean payment) {
+    public ProcessedOrderDTO processOrder(InitialOrderDTO orderDTO, float totalPrice, boolean payment, List<Product> products) {
         Order order = dataMapper.orderDTOToOrder(orderDTO, totalPrice);
         ProcessedOrderDTO processedOrder = createProcessedOrder(order, orderDTO.getProductsId());
         if (payment) {
@@ -104,11 +106,11 @@ public class OrderService {
             orderRepository.save(order);
         }
         processedOrder.setStatus(order.getStatus());
-        for (Integer id : processedOrder.getProducts().keySet()) {
+        for (Product product : products) {
             OrderProduct orderProduct = new OrderProduct();
             orderProduct.setOrder(order);
-            orderProduct.setProduct(productRepository.findById(id).get());
-            orderProduct.setQuantity(processedOrder.getProducts().get(id));
+            orderProduct.setProduct(product);
+            orderProduct.setQuantity(processedOrder.getProducts().get(product.getProductId()));
             orderProductRepository.save(orderProduct);
         }
         return processedOrder;

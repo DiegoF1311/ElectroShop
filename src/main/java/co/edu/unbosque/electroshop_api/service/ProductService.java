@@ -3,8 +3,6 @@ package co.edu.unbosque.electroshop_api.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,21 +63,19 @@ public class ProductService {
      * </p>
      * 
      * @param list a map of product IDs to quantities to be reserved
+     * @param products complete list of products
      * @return the total price of the reserved products, or 0 if reservation fails due to insufficient stock
      */
-    public float productReservation(Map<Integer, Integer> list) {
-        Set<Integer> productsIds = list.keySet();
+    public float productReservation(Map<Integer, Integer> list, List<Product> products) {
         float totalPrice = 0;
-        for (Integer id : productsIds) {
-            Optional<Product> product = productRepository.findById(id);
-            Product auxProduct = product.get();
-            int actualStock = auxProduct.getStock();
-            auxProduct.setStock(actualStock - list.get(id));
-            if (auxProduct.getStock() < 0) {
+        for (Product product : products) {
+            int actualStock = product.getStock();
+            if (actualStock - list.get(product.getProductId()) < 0) {
                 return 0; 
             }
-            productRepository.save(auxProduct);
-            totalPrice += auxProduct.getPrice() * list.get(id);
+            product.setStock(actualStock - list.get(product.getProductId()));
+            productRepository.save(product);
+            totalPrice += product.getPrice() * list.get(product.getProductId());
         }
         return totalPrice;
     }
@@ -100,6 +96,19 @@ public class ProductService {
             productsDTO.add(dataMapper.productToProductDTO(products.get(i)));
         }
         return productsDTO;
+    }
+    
+    /**
+     * Retrieves products by their IDs from the database.
+     * <p>
+     * This method fetches {@link Product} entities from the database based on a list of product IDs.
+     * </p>
+     * 
+     * @param productIds the list of product IDs to retrieve
+     * @return a list of {@link Product} representing the products associated with the given IDs
+     */
+    public List<Product> getProductsByOrder(List<Integer> productIds) {
+    	return (List<Product>) productRepository.findAllById(productIds);
     }
 
 }

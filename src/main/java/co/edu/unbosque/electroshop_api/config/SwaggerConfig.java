@@ -37,7 +37,7 @@ public class SwaggerConfig {
 	        return new OpenAPI()
 	                .info(new Info()
 	                        .title("ElectroShop API")
-	                        .version("1.0.0")
+	                        .version("2.0.0")
 	                        .description("This API is in charge of processing and confirming orders for the company ElectroShop.")
 	                );
 	    }

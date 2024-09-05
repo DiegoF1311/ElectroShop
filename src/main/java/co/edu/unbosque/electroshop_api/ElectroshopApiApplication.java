@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author SEBASTIAN ANDRES QUINTANA, DIEGO ALEJANDRO FORERO, MIGUEL ANGEL RUIZ y ANA CAROLINA QUIROGA 
- * @date 3 de septiembre del 2024
- * @version 1.0.0
+ * @date 4 de septiembre del 2024
+ * @version 2.0.0
  * The entry point for the ElectroShop API application.
  * <p>
  * This class contains the main method which is used to run the Spring Boot application. It is marked with

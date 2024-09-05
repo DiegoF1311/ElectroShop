@@ -1,5 +1,8 @@
 package co.edu.unbosque.electroshop_api.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.unbosque.electroshop_api.model.ProcessedOrderDTO;
+import co.edu.unbosque.electroshop_api.model.Product;
 import co.edu.unbosque.electroshop_api.model.InitialOrderDTO;
 import co.edu.unbosque.electroshop_api.service.OrderProductService;
 import co.edu.unbosque.electroshop_api.service.OrderService;
@@ -86,14 +90,14 @@ public class OrderController {
 	 })
 	@PostMapping("/pedidos/procesar")
 	public ResponseEntity<?> processOrder(@Valid @RequestBody InitialOrderDTO orderDTO) {
-		
-		float totalPrice = productService.productReservation(orderDTO.getProductsId());
+		List<Product> productsByOrder = productService.getProductsByOrder(new ArrayList<>(orderDTO.getProductsId().keySet()));
+		float totalPrice = productService.productReservation(orderDTO.getProductsId(), productsByOrder);
 		if (totalPrice == 0) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Error processing order: Insufficient products.");
 		}
 		boolean payment = paymentService.processPayment(totalPrice, orderDTO.getCard());
-		ProcessedOrderDTO processedOrder = orderService.processOrder(orderDTO, totalPrice, payment);
+		ProcessedOrderDTO processedOrder = orderService.processOrder(orderDTO, totalPrice, payment, productsByOrder);
 		return ResponseEntity.ok(processedOrder); 
 	}
 
